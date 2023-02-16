@@ -14,8 +14,13 @@ const noteWrapper = css`
   background-color: rgb(255, 255, 255, 0.2);
   border: 1px solid rgb(255, 255, 255, 0.2);
   border-radius: 6px;
+  box-shadow: 2px 2px rgb(255, 255, 255, 0.5);
   @media (min-width: 1000px) {
     width: 30%;
+  }
+
+  :hover {
+    box-shadow: 0px 0px 5px 5px rgb(255, 255, 255, 0.5);
   }
 `;
 
@@ -35,7 +40,7 @@ const headlineWrapper = css`
     font-weight: 700;
     color: rgb(255, 255, 255);
     text-transform: uppercase;
-    margin: 12px 0;
+    margin: 20px 0;
     padding: 0;
   }
 `;
@@ -58,6 +63,9 @@ const inputWrapper = css`
     border: 1px solid rgb(255, 255, 255);
     border-radius: 6px;
     margin-bottom: 6px;
+    color: rgb(255, 255, 255);
+    font-family: sans-serif;
+    padding: 3px;
   }
 `;
 
@@ -78,17 +86,16 @@ export default function Note({
   date,
   title,
   text,
-  deleteNote,
   editing,
-  setUpdateText,
-  setUpdateTitle,
-  editHandler,
+  setEditing,
+  setNotes,
+  notes,
 }) {
   const [showText, setShowText] = useState(false);
   const dateFormat = new Date(date);
   const yearOfNote = dateFormat.getFullYear();
   const monthOfNote = dateFormat.getMonth() + 1;
-  const dateOfNote = dateFormat.getDay();
+  const dateOfNote = dateFormat.getDate();
   const hours = dateFormat.getHours();
   const minutes = ('0' + dateFormat.getMinutes()).slice(-2);
   const newDate =
@@ -104,8 +111,43 @@ export default function Note({
   const viewMode = {};
   const editMode = {};
 
+  const setUpdateTitle = (updatedTitle, id) => {
+    setNotes(
+      notes.map((note) => {
+        if (note.id === id) {
+          note.title = updatedTitle;
+        }
+        return note;
+      }),
+    );
+  };
+
+  const setUpdateText = (updatedText, id) => {
+    setNotes(
+      notes.map((note) => {
+        if (note.id === id) {
+          note.text = updatedText;
+        }
+        return note;
+      }),
+    );
+  };
+
+  const editHandler = () => {
+    if (editing === false) {
+      setEditing(true);
+    } else {
+      setEditing(false);
+    }
+  };
+
+  const deleteNote = (id) => {
+    const filteredNotes = notes.filter((note) => note.id !== id);
+    setNotes(filteredNotes);
+  };
+
   if (editing) {
-    viewMode.display = 'none';
+    viewMode.display = 'block';
   } else {
     editMode.display = 'none';
   }

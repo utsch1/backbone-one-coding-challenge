@@ -1,17 +1,53 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
-import { faFloppyDisk } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCaretDown,
+  faCaretUp,
+  faFloppyDisk,
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useState } from 'react';
+import { v4 as uuid } from 'uuid';
 
 const inputWrapper = css`
   margin: 20px 0;
   display: flex;
   flex-direction: column;
 
-  h2 {
-    text-align: center;
-    font-size: 32px;
-    text-transform: uppercase;
+  /* button {
+    background: rgb(255, 255, 255, 0.2);
+    border: 1px solid rgb(255, 255, 255, 0.2);
+    border-radius: 6px;
+    margin: 6px 0;
+    padding: 3px;
+    align-self: center;
+    color: rgb(255, 255, 255);
+    font-size: 16px;
+    width: 100%;
+    align-self: flex-start;
+
+    @media (min-width: 1000px) {
+      width: 32%;
+      float: left;
+    }
+  } */
+`;
+
+const buttonNewNote = css`
+  background: rgb(255, 255, 255, 0.2);
+  border: 1px solid rgb(255, 255, 255, 0.2);
+  border-radius: 6px;
+  margin: 6px 0;
+  padding: 3px;
+  align-self: center;
+  color: rgb(255, 255, 255);
+  font-size: 16px;
+  width: 100%;
+  align-self: flex-start;
+
+  @media (min-width: 1000px) {
+    width: 32%;
+    float: left;
   }
 `;
 
@@ -32,6 +68,8 @@ const newNoteWrapper = css`
     border-radius: 6px;
     margin-bottom: 6px;
     color: rgb(255, 255, 255);
+    font-family: sans-serif;
+    padding: 3px;
   }
 
   textarea:focus {
@@ -49,32 +87,72 @@ const newNoteWrapper = css`
   }
 `;
 
-const NewNote = ({ title, text, titleHandler, textHandler, saveHandler }) => {
+const NewNote = ({ title, text, setTitle, setText, notes, setNotes, date }) => {
+  const [showInput, setShowInput] = useState(false);
+
+  const onClick = () => {
+    setShowInput((wasOpened) => !wasOpened);
+  };
+
+  // Handlers
+  const titleHandler = (event) => {
+    setTitle(event.currentTarget.value);
+  };
+
+  const textHandler = (event) => {
+    setText(event.currentTarget.value);
+  };
+
+  const saveHandler = () => {
+    setNotes([
+      ...notes,
+      {
+        id: uuid(),
+        title: title,
+        text: text,
+        date: date,
+      },
+    ]);
+    setTitle('');
+    setText('');
+  };
+
   return (
     <div css={inputWrapper}>
-      <h2>New note</h2>
-      <div css={newNoteWrapper}>
-        <div>Title</div>
-        <textarea
-          type="text"
-          rows="1"
-          maxLength="20"
-          value={title}
-          onChange={titleHandler}
-        />
-        <div>Note text</div>
-        <textarea
-          type="text"
-          rows="5"
-          maxLength="200"
-          value={text}
-          onChange={textHandler}
-        />
-        <button onClick={saveHandler}>
-          {' '}
-          <FontAwesomeIcon icon={faFloppyDisk} size="2xl" />
+      {showInput === false ? (
+        <button onClick={onClick} css={buttonNewNote}>
+          New note <FontAwesomeIcon icon={faCaretDown} />
         </button>
-      </div>
+      ) : (
+        <button onClick={onClick} css={buttonNewNote}>
+          New note <FontAwesomeIcon icon={faCaretUp} />
+        </button>
+      )}
+
+      {showInput && (
+        <div css={newNoteWrapper}>
+          <div>Title</div>
+          <textarea
+            type="text"
+            rows="1"
+            maxLength="20"
+            value={title}
+            onChange={titleHandler}
+          />
+          <div>Note text</div>
+          <textarea
+            type="text"
+            rows="5"
+            maxLength="200"
+            value={text}
+            onChange={textHandler}
+          />
+          <button onClick={saveHandler}>
+            {' '}
+            <FontAwesomeIcon icon={faFloppyDisk} size="2xl" />
+          </button>
+        </div>
+      )}
     </div>
   );
 };

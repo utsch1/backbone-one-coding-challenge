@@ -1,7 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
 import { useEffect, useState } from 'react';
-import { v4 as uuid } from 'uuid';
 import NewNote from './NewNote';
 import Note from './Note';
 
@@ -33,6 +32,8 @@ const searchBar = css`
   border: 1px solid rgb(255, 255, 255, 0.2);
   color: rgb(255, 255, 255);
   font-size: 16px;
+  font-family: sans-serif;
+
   @media (min-width: 1000px) {
     width: 32%;
   }
@@ -63,85 +64,20 @@ export default function Notes() {
     localStorage.setItem('Notes', JSON.stringify(notes));
   }, [notes]);
 
-  const titleHandler = (event) => {
-    setTitle(event.currentTarget.value);
-  };
-
   // searchbar functionality
-  const handleChange = (event) => {
-    setSearchInput(event.currentTarget.value);
-  };
 
-  const onSubmitSearchBar = (event) => {
+  function onSubmit(event) {
     event.preventDefault();
-  };
-
-  if (searchInput.length > 0) {
-    notes.filter((note) => {
-      return note.headline.match(searchInput);
-    });
   }
-
-  const textHandler = (event) => {
-    setText(event.currentTarget.value);
+  const handleChange = (event) => {
+    setSearchInput(event.target.value);
   };
 
-  const saveHandler = () => {
-    setNotes([
-      ...notes,
-      {
-        id: uuid(),
-        title: title,
-        text: text,
-        date: date,
-      },
-    ]);
-    setTitle('');
-    setText('');
-  };
 
-  const setUpdateTitle = (updatedTitle, id) => {
-    setNotes(
-      notes.map((note) => {
-        if (note.id === id) {
-          note.title = updatedTitle;
-        }
-        return note;
-      }),
-    );
-  };
-
-  const setUpdateText = (updatedText, id) => {
-    setNotes(
-      notes.map((note) => {
-        if (note.id === id) {
-          note.text = updatedText;
-        }
-        return note;
-      }),
-    );
-  };
-
-  const editHandler = () => {
-    if (editing === false) {
-      setEditing(true);
-      setDate(Date.now());
-    } else {
-      setEditing(false);
-      setDate(Date.now());
-    }
-  };
-
-  const deleteNote = (id) => {
-    const filteredNotes = notes.filter((note) => note.id !== id);
-    setNotes(filteredNotes);
-  };
-
-  console.log(notes);
 
   return (
     <div css={notesWrapper}>
-      <form onSubmit={onSubmitSearchBar}>
+      <form onSubmit={onSubmit}>
         <input
           placeholder="Search note"
           onChange={handleChange}
@@ -149,33 +85,43 @@ export default function Notes() {
           css={searchBar}
         />
       </form>
-      <h1>Your notes</h1>
-      <div css={noteFlexWrapper}>
-        {notes.map((note) => (
-          <Note
-            key={note.id}
-            id={note.id}
-            date={note.date}
-            setDate={setDate}
-            title={note.title}
-            text={note.text}
-            editing={editing}
-            setEditing={setEditing}
-            deleteNote={deleteNote}
-            setUpdateTitle={setUpdateTitle}
-            setUpdateText={setUpdateText}
-            editHandler={editHandler}
-          />
-        ))}
-      </div>
       <div>
         <NewNote
           title={title}
           text={text}
-          titleHandler={titleHandler}
-          textHandler={textHandler}
-          saveHandler={saveHandler}
+          setText={setText}
+          setTitle={setTitle}
+          notes={notes}
+          setNotes={setNotes}
+          date={date}
         />
+      </div>
+      <h1>Your notes</h1>
+      <div css={noteFlexWrapper}>
+        {notes
+          .filter((note) => {
+            const searchTerm = searchInput.toLowerCase();
+            const noteTitle = note.title.toLowerCase();
+            return noteTitle.startsWith(searchTerm);
+          })
+          .map((note) => {
+            return (
+              <Note
+                key={note.id}
+                id={note.id}
+                date={note.date}
+                setDate={setDate}
+                title={note.title}
+                text={note.text}
+                editing={editing}
+                setEditing={setEditing}
+                setText={setText}
+                setTitle={setTitle}
+                notes={notes}
+                setNotes={setNotes}
+              />
+            );
+          })}
       </div>
     </div>
   );
