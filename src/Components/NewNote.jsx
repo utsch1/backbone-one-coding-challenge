@@ -13,24 +13,6 @@ const inputWrapper = css`
   margin: 20px 0;
   display: flex;
   flex-direction: column;
-
-  /* button {
-    background: rgb(255, 255, 255, 0.2);
-    border: 1px solid rgb(255, 255, 255, 0.2);
-    border-radius: 6px;
-    margin: 6px 0;
-    padding: 3px;
-    align-self: center;
-    color: rgb(255, 255, 255);
-    font-size: 16px;
-    width: 100%;
-    align-self: flex-start;
-
-    @media (min-width: 1000px) {
-      width: 32%;
-      float: left;
-    }
-  } */
 `;
 
 const buttonNewNote = css`
@@ -90,7 +72,7 @@ const newNoteWrapper = css`
 const NewNote = ({ title, text, setTitle, setText, notes, setNotes, date }) => {
   const [showInput, setShowInput] = useState(false);
 
-  const onClick = () => {
+  const showInputHandler = () => {
     setShowInput((wasOpened) => !wasOpened);
   };
 
@@ -120,11 +102,11 @@ const NewNote = ({ title, text, setTitle, setText, notes, setNotes, date }) => {
   return (
     <div css={inputWrapper}>
       {showInput === false ? (
-        <button onClick={onClick} css={buttonNewNote}>
+        <button onClick={showInputHandler} css={buttonNewNote}>
           New note <FontAwesomeIcon icon={faCaretDown} />
         </button>
       ) : (
-        <button onClick={onClick} css={buttonNewNote}>
+        <button onClick={showInputHandler} css={buttonNewNote}>
           New note <FontAwesomeIcon icon={faCaretUp} />
         </button>
       )}
@@ -148,7 +130,6 @@ const NewNote = ({ title, text, setTitle, setText, notes, setNotes, date }) => {
             onChange={textHandler}
           />
           <button onClick={saveHandler}>
-            {' '}
             <FontAwesomeIcon icon={faFloppyDisk} size="2xl" />
           </button>
         </div>

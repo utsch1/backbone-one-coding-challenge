@@ -73,8 +73,6 @@ export default function Notes() {
     setSearchInput(event.target.value);
   };
 
-
-
   return (
     <div css={notesWrapper}>
       <form onSubmit={onSubmit}>

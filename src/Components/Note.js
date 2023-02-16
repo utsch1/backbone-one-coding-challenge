@@ -92,22 +92,6 @@ export default function Note({
   notes,
 }) {
   const [showText, setShowText] = useState(false);
-  const dateFormat = new Date(date);
-  const yearOfNote = dateFormat.getFullYear();
-  const monthOfNote = dateFormat.getMonth() + 1;
-  const dateOfNote = dateFormat.getDate();
-  const hours = dateFormat.getHours();
-  const minutes = ('0' + dateFormat.getMinutes()).slice(-2);
-  const newDate =
-    dateOfNote +
-    '/' +
-    monthOfNote +
-    '/' +
-    yearOfNote +
-    ', ' +
-    hours +
-    ':' +
-    minutes;
   const viewMode = {};
   const editMode = {};
 
@@ -152,14 +136,19 @@ export default function Note({
     editMode.display = 'none';
   }
 
-  const onClick = () => setShowText((wasOpened) => !wasOpened);
+  const showTextHandler = () => setShowText((wasOpened) => !wasOpened);
 
   return (
     <div css={noteWrapper}>
       <div style={viewMode}>
-        <div css={dateStyle}>{newDate}</div>
+        <div css={dateStyle}>
+          {new Date(date).toLocaleDateString('de-DE', {
+            hour: '2-digit',
+            minute: '2-digit',
+          })}
+        </div>
         <div css={headlineWrapper}>
-          <button onClick={onClick}>{title}</button>
+          <button onClick={showTextHandler}>{title}</button>
         </div>
         {showText ? (
           <div css={textStyles}>
